@@ -52,7 +52,6 @@ class ResourceController extends Controller
         if(!in_array(explode(';',explode('/',explode(',', $request->user_image)[0])[1])[0], array('jpg','jpeg','png')) ) {
             $this->throwException('student_image has invalid file type', 422);
         }
-
         if(!in_array(explode(';',explode('/',explode(',', $request->user_signature)[0])[1])[0], array('jpg','jpeg','png')) ) {
             $this->throwException('student_signature has invalid file type', 422);
         }
@@ -203,13 +202,6 @@ class ResourceController extends Controller
     }
     public function addStudent(Request $request){
 
-        if(!in_array(explode(';',explode('/',explode(',', $request->student_image)[0])[1])[0], array('jpg','jpeg','png')) ) {
-            $this->throwException('student_image has invalid file type', 422);
-        }
-
-        if(!in_array(explode(';',explode('/',explode(',', $request->student_signature)[0])[1])[0], array('jpg','jpeg','png')) ) {
-            $this->throwException('student_signature has invalid file type', 422);
-        }
         $fields = $request->validate([
             'nfc_id' => 'required|string',
             'first_name' => 'required|string',
@@ -228,6 +220,13 @@ class ResourceController extends Controller
             'student_image' => 'required|string',
             'student_signature' => 'required|string',
         ]);
+        if(!in_array(explode(';',explode('/',explode(',', $request->student_image)[0])[1])[0], array('jpg','jpeg','png')) ) {
+            $this->throwException('student_image has invalid file type', 422);
+        }
+
+        if(!in_array(explode(';',explode('/',explode(',', $request->student_signature)[0])[1])[0], array('jpg','jpeg','png')) ) {
+            $this->throwException('student_signature has invalid file type', 422);
+        }
 
 
 
@@ -286,8 +285,8 @@ class ResourceController extends Controller
         $result = [];
         $locations = SchoolLocation::all();
 
-        foreach ($locations as $location1) {
-            $result[$location1->location] = count(Student::where('location_id', $location1)->get());
+        foreach ($locations as $location1){
+            $result[$location1->location_slug] = Student::where('location_id', $location1->id)->get()->count();
         }
 
         return $result;
@@ -297,7 +296,8 @@ class ResourceController extends Controller
         $result = [];
         $violations = Violation::all();
         foreach($violations as $violation) {
-            $result[$violation->violation_name] = count(StudentViolation::where('violation_id', $violation->id)->get());
+
+            $result[$violation->violation_name] = StudentViolation::where('violation_id', $violation->id)->get()->count();
         }
         return $result;
     }

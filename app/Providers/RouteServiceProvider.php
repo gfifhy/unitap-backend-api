@@ -43,7 +43,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api/student')
                 ->group(base_path('routes/api/student/student.php'));
 
-
             Route::middleware(['api', 'auth:sanctum'])
                 ->prefix('api/admin')
                 ->group(base_path('routes/api/admin/admin.php'));
